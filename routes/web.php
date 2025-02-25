@@ -3,6 +3,7 @@
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use App\Http\Controllers\AskController;
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -21,7 +22,8 @@ Route::middleware([
     Route::get('/dashboard', function () {
         return Inertia::render('Dashboard');
     })->name('dashboard');
-});
 
-Route::get('/ask', [AskController::class, 'index'])->name('ask.index');
-Route::post('/ask', [AskController::class, 'ask'])->name('ask.post');
+    // Nouvelles routes pour Ask
+    Route::get('/ask', [AskController::class, 'index'])->name('ask.index');
+    Route::post('/ask', [AskController::class, 'ask'])->name('ask.post');
+});
