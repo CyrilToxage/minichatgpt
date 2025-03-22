@@ -3,12 +3,15 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Models\Conversation;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 use Laravel\Jetstream\HasProfilePhoto;
 use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class User extends Authenticatable
 {
@@ -29,6 +32,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'preferred_model', // Ajouté pour stocker le modèle préféré
     ];
 
     /**
@@ -63,5 +67,43 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    /**
+     * Get all conversations for the user.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany<\App\Models\Conversation>
+     */
+    public function conversations(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(Conversation::class);
+    }
+
+    /**
+     * Get the custom instructions for the user.
+     */
+    public function customInstruction(): HasOne
+    {
+        return $this->hasOne(CustomInstruction::class);
+    }
+
+    /**
+     * Get the active custom instructions for the user or create default ones.
+     */
+    public function getActiveInstructions()
+    {
+        $instructions = $this->customInstruction;
+
+        if (!$instructions) {
+            // Créer des instructions par défaut
+            $instructions = $this->customInstruction()->create([
+                'about_you' => '',
+                'assistant_behavior' => '',
+                'custom_commands' => [],
+                'is_active' => true,
+            ]);
+        }
+
+        return $instructions;
     }
 }
