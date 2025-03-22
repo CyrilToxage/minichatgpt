@@ -17,4 +17,16 @@ export default defineConfig({
             },
         }),
     ],
+    build: {
+        chunkSizeWarningLimit: 2000, // Augmentation de la limite
+        rollupOptions: {
+            output: {
+                manualChunks: {
+                    'highlight': ['highlight.js'],
+                    'vendor': ['vue', '@inertiajs/vue3'],
+                    'markdown': ['markdown-it']
+                }
+            }
+        }
+    }
 });
